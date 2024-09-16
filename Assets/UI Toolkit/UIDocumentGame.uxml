@@ -1,0 +1,6 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/DefaultStyleSheet.uss?fileID=7433441132597879392&amp;guid=afe4a0c62b8154591823a7385de852d3&amp;type=3#DefaultStyleSheet" />
+    <engine:ProgressBar value="0.2" name="XPProgressBar" high-value="1" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
+    <engine:Label text="00:00:00" name="TimerLabel" style="-unity-font-definition: url(&quot;project://database/Assets/Setting/DungGeunMo.ttf?fileID=12800000&amp;guid=21fabcdfdbe274581b0b55fdee348d31&amp;type=3#DungGeunMo&quot;); color: rgb(242, 242, 242); font-size: 32px; -unity-text-align: upper-center; margin-top: 0; padding-top: 0; padding-left: 0; padding-right: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-bottom: 0; top: 12px;" />
+    <engine:Button name="PauseButton" text="PAUSE" style="padding-top: 0; padding-right: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-bottom: 0; padding-left: 0; width: 128px; height: 40px; top: 36px; right: 12px; left: auto; position: absolute;" />
+</engine:UXML>

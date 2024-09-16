@@ -1,0 +1,4 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/DefaultStyleSheet.uss?fileID=7433441132597879392&amp;guid=afe4a0c62b8154591823a7385de852d3&amp;type=3#DefaultStyleSheet" />
+    <engine:Label text="GAME OVER" style="left: 50%; top: 50%; height: 28px; width: 140px; translate: -50% -50%; -unity-text-align: middle-center;" />
+</engine:UXML>
