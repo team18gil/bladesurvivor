@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class CharacterManager : MonoBehaviour
 {
+    public delegate Vector2 MoveValueDelegate();
+    private MoveValueDelegate moveValueDelegate;
+
     [SerializeField] private CharacterObject characterObject;
     private float hp;
-    
+
+    private Coroutine moveCoroutine;
 
     private void Awake()
     {
         GameManager.Instance.AddEvent(EEvent.GameReady, OnGameReady);
         GameManager.Instance.AddEvent(EEvent.GameStart, OnGameStart);
         GameManager.Instance.AddEvent(EEvent.MonsterHitCharacter, OnMonsterHitCharacter);
-        GameManager.Instance.AddEvent(EEvent.ChangeHP, OnChangeHP);
         GameManager.Instance.AddEvent(EEvent.GameOver, OnGameOver);
     }
 
@@ -25,35 +28,30 @@ public class CharacterManager : MonoBehaviour
 
     private void OnGameStart(object param)
     {
+        var gameData = (GameData)param;
+        hp = gameData.maxHP;
+
+        characterObject.InitialVelocity = gameData.velocity;
         characterObject.SetStatus(CharacterObject.ECharacterStatus.Alive);
         characterObject.transform.localPosition = Vector3.zero;
         characterObject.MakeWeapon(CharacterObject.EWeaponType.Sword); // set with character or initial setting
-
-        float initialHP = GameManager.Instance.UserData.DefaultHP;
-        GameManager.Instance.SendEvent(EEvent.ChangeHP, (0f, initialHP));
     }
-
+    
     private void OnMonsterHitCharacter(object param)
     {
+        if (hp <= 0) return;
         float damage = (float)param;
-        float prevHP = hp;
         float nextHP = hp - damage;
-        if (prevHP <= 0 && nextHP < 0) return;
 
-        GameManager.Instance.SendEvent(EEvent.ChangeHP, (prevHP, nextHP));
-    }
-
-    private void OnChangeHP(object param)
-    {
-        var pair = ((float, float))param;
-        float prevHP = pair.Item1;
-        float nextHP = pair.Item2;
-
-        hp = nextHP;
-        if (prevHP > nextHP && hp <= 0)
+        if (hp > nextHP && nextHP <= 0)
         {
             GameManager.Instance.EndGame();
         }
+        else
+        {
+            GameManager.Instance.SendEvent(EEvent.ChangeHP, nextHP);
+        }
+        hp = nextHP;
     }
 
     private void OnGameOver(object param)
@@ -63,8 +61,33 @@ public class CharacterManager : MonoBehaviour
 
 
 
-    public void MoveCharacterBy(Vector3 delta)
+    public void StartMove(MoveValueDelegate moveValueDelegate)
     {
-        characterObject.MoveCharacterBy(delta);
+        this.moveValueDelegate = moveValueDelegate;
+        if (moveCoroutine is null)
+        {
+            moveCoroutine = StartCoroutine(MoveCoroutine());
+        }
+    }
+
+    private IEnumerator MoveCoroutine()
+    {
+        while (true)
+        {
+            var delta = moveValueDelegate is not null ? moveValueDelegate() : Vector2.zero;
+            characterObject.MoveCharacterBy(delta);
+
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    public void EndMove()
+    {
+        moveValueDelegate = null;
+        if (moveCoroutine is not null)
+        {
+            StopCoroutine(moveCoroutine);
+            moveCoroutine = null;
+        }
     }
 }

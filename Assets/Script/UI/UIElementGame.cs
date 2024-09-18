@@ -30,7 +30,7 @@ public class UIElementGame : UIElementBase
 
     private void OnTimerTick(object param)
     {
-        int fullTimes = (((int, int))param).Item2;
+        int fullTimes = (int)param;
 
         int seconds = fullTimes % 60;
         fullTimes = (fullTimes - seconds) / 60;

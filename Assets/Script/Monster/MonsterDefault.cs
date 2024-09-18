@@ -13,7 +13,7 @@ public class MonsterDefault : MonsterBase
         float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
 
         Vector3 dest = new(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle), 0f);
-        dest *= 8f; // radius
+        dest *= 20f; // radius
         dest += characterObject.transform.localPosition; // start from character position
 
         transform.localPosition = dest;

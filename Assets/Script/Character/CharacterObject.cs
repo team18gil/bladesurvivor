@@ -22,6 +22,7 @@ public class CharacterObject : MonoBehaviour
     [SerializeField] private CharacterViewObject characterViewObject;
     [SerializeField] private CharacterFollowingObject characterFollowingObject;
 
+    public float InitialVelocity { set; private get; }
     private new Rigidbody2D rigidbody2D;
 
     private void Awake()
@@ -75,9 +76,7 @@ public class CharacterObject : MonoBehaviour
     public void MoveCharacterBy(Vector2 delta)
     {
         float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-
-        float velocity = 0.1f;
-        Vector2 dest = rigidbody2D.position + (delta * velocity);
+        Vector2 dest = rigidbody2D.position + (delta * InitialVelocity);
 
         rigidbody2D.MovePositionAndRotation(dest, angle);
     }

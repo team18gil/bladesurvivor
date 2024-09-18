@@ -58,6 +58,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CharacterManager characterManager;
     [SerializeField] private UIManager uiManager;
 
+    public UserData UserData => userData;
+    public Transform PlaygroundParent => playgroundParent;
+
     private enum EGameStatus
     {
         Ready,
@@ -68,10 +71,6 @@ public class GameManager : MonoBehaviour
     private DefaultInputActionAsset inputActionAsset;
     private EGameStatus gameStatus;
     private Coroutine timerCoroutine = null;
-
-    public UserData UserData => userData;
-    public Transform PlaygroundParent => playgroundParent;
-    public Vector2 TouchActionPosition => inputActionAsset.Player.Touch.ReadValue<Vector2>();
 
     private void Awake()
     {
@@ -97,16 +96,34 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        // TODO: set initial data on here
+        var newGameData = new GameData()
+        {
+            velocity = 0.1f,
+            maxHP = 100f,
+        };
+
         gameStatus = EGameStatus.Playing;
-        eventManager.SendEvent(EEvent.GameStart);
-        inputActionAsset.Player.Move.performed += OnMovePerformed;
+        eventManager.SendEvent(EEvent.GameStart, newGameData);
+        inputActionAsset.Player.Move.started += OnMoveStarted;
+        inputActionAsset.Player.Move.canceled += OnMoveCanceled;
 
         timerCoroutine = StartCoroutine(TimerCoroutine());
     }
 
-    private void OnMovePerformed(InputAction.CallbackContext callback)
+    private void OnMoveStarted(InputAction.CallbackContext obj)
     {
-        characterManager.MoveCharacterBy(callback.ReadValue<Vector2>());
+        characterManager.StartMove(GetMoveValue);
+    }
+
+    private Vector2 GetMoveValue()
+    {
+        return inputActionAsset.Player.Move.ReadValue<Vector2>();
+    }
+
+    private void OnMoveCanceled(InputAction.CallbackContext obj)
+    {
+        characterManager.EndMove();
     }
 
     private IEnumerator TimerCoroutine()
@@ -115,7 +132,7 @@ public class GameManager : MonoBehaviour
         int timer = -1;
         while (true)
         {
-            eventManager.SendEvent(EEvent.TimerTick, (timer, ++timer));
+            eventManager.SendEvent(EEvent.TimerTick, ++timer);
 
             // time goes slightly faster to make gamers feel they are good at playing
             yield return new WaitForSeconds(0.9f);
@@ -141,7 +158,8 @@ public class GameManager : MonoBehaviour
     {
         gameStatus = EGameStatus.Over;
         eventManager.SendEvent(EEvent.GameOver);
-        inputActionAsset.Player.Move.performed -= OnMovePerformed;
+        inputActionAsset.Player.Move.started -= OnMoveStarted;
+        inputActionAsset.Player.Move.canceled -= OnMoveCanceled;
 
         if (timerCoroutine is not null)
         {
