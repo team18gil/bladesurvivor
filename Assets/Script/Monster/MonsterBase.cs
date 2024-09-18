@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class MonsterBase : MonoBehaviour
 {
-    public delegate void MonsterDeadDelegate(MonsterBase monster);
-
     protected virtual float MaxHP => 0f;
     protected virtual float Damage => 0f;
     protected virtual float DamageInterval => 9999f;
@@ -16,17 +14,14 @@ public class MonsterBase : MonoBehaviour
     private Coroutine characterHitCoroutine;
     private Dictionary<WeaponProjectileDefault, Coroutine> weaponDamageCoroutineDic = new();
 
-    private MonsterDeadDelegate deadCallback;
-
     protected virtual void OnEnable()
     {
         hp = MaxHP;
     }
 
-    public void Initialize(CharacterObject characterObject, MonsterDeadDelegate deadCallback)
+    public void Initialize(CharacterObject characterObject)
     {
         this.characterObject = characterObject;
-        this.deadCallback = deadCallback;
 
         StartCoroutine(MoveCoroutine());
         SetInitialPosition();
@@ -95,12 +90,14 @@ public class MonsterBase : MonoBehaviour
 
     private IEnumerator HitCoroutine(float damage, float damageInterval)
     {
-        while(true)
+        while (true)
         {
             hp -= damage;
             if (hp <= 0)
             {
-                deadCallback?.Invoke(this);
+                GameManager.Instance.SendEvent(EEvent.MonsterDead, this);
+                Stop();
+                
                 break;
             }
             yield return new WaitForSeconds(damageInterval);
@@ -111,6 +108,8 @@ public class MonsterBase : MonoBehaviour
     {
         StopCoroutineAtDicIfRun(projectile);
     }
+
+
 
     public void Stop()
     {

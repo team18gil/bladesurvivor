@@ -9,7 +9,6 @@ public class MonsterManager : MonoBehaviour
         Default,
         DefaultFaster,
     }
-    [SerializeField] private CharacterObject characterObject;
 
     private List<MonsterBase> monsters = new();
     private Coroutine monsterGenerateCoroutine = null;
@@ -18,6 +17,7 @@ public class MonsterManager : MonoBehaviour
     {
         GameManager.Instance.AddEvent(EEvent.GameReady, OnGameReady);
         GameManager.Instance.AddEvent(EEvent.GameStart, OnGameStart);
+        GameManager.Instance.AddEvent(EEvent.MonsterDead, OnMonsterDead);
         GameManager.Instance.AddEvent(EEvent.GameOver, OnGameOver);
     }
 
@@ -54,35 +54,29 @@ public class MonsterManager : MonoBehaviour
         }
     }
 
-    public void CreateMonster(EMonsterType type, Transform parent)
+    public void CreateMonster(EMonsterType monsterType, Transform parent)
     {
-        MonsterBase monster = null;
         var goPool = GameManager.Instance.GameObjectPool;
-        switch(type)
-        {
-            case EMonsterType.Default:
-                monster = goPool.Get<MonsterDefault>(parent);
-                break;
-            case EMonsterType.DefaultFaster:
-                monster = goPool.Get<MonsterDefaultFaster>(parent);
-                break;
-        }
+        var monster = goPool.GetByName<MonsterBase>($"Monster{monsterType}", parent);
 
         if (monster is not null)
         {
-            monster.Initialize(characterObject, OnMonsterDead);
+            var characterObject = GameManager.Instance.CharacterObject;
+            monster.Initialize(characterObject);
             monsters.Add(monster);
         }
     }
 
-    private void OnMonsterDead(MonsterBase monster)
+    private void OnMonsterDead(object param)
     {
-        // dead effect
-        if (monsters.Contains(monster))
+        if (param is MonsterBase monster)
         {
-            monsters.Remove(monster);
+            if (monsters.Contains(monster))
+            {
+                monsters.Remove(monster);
+            }
+            GameManager.Instance.GameObjectPool.Release(monster);
         }
-        GameManager.Instance.GameObjectPool.Release(monster);
     }
 
     private void OnGameOver(object param)

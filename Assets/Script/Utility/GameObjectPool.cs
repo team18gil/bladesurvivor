@@ -48,6 +48,42 @@ public class GameObjectPool : ScriptableObject
         return component;
     }
 
+    /// <summary>
+    /// Automatically find class with className and make with using Get() method
+    /// </summary>
+    public T GetByName<T>(string className, Transform parent) where T : MonoBehaviour
+    {
+        if (string.IsNullOrEmpty(className))
+        {
+            Debug.LogWarning($"className is null");
+            return null;
+        }
+
+        System.Type type = System.Type.GetType(className);
+        if (type is null)
+        {
+            Debug.LogWarning($"Class name {className} does not exist. Check the class name or namespace.");
+            return null;
+        }
+
+        // Ensure the type can be assigned to T (e.g., it inherits from T)
+        if (!typeof(T).IsAssignableFrom(type))
+        {
+            Debug.LogWarning($"Class {className} does not inherit from {typeof(T)}.");
+            return null;
+        }
+
+        System.Reflection.MethodInfo method = GetType().GetMethod("Get").MakeGenericMethod(type);
+
+        if (method.Invoke(this, new object[] { parent }) is not T result)
+        {
+            Debug.LogWarning($"Result not found on generic result with name {className}");
+            return null;
+        }
+
+        return result;
+    }
+
     public void Release(MonoBehaviour component)
     {
         var type = component.GetType();

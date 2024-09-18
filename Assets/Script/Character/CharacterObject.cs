@@ -23,6 +23,7 @@ public class CharacterObject : MonoBehaviour
     [SerializeField] private CharacterFollowingObject characterFollowingObject;
 
     public float InitialVelocity { set; private get; }
+    public float MagneticRange = 4f;
     private new Rigidbody2D rigidbody2D;
 
     private void Awake()
@@ -67,16 +68,10 @@ public class CharacterObject : MonoBehaviour
         }
     }
 
-    public void LookAt(Vector2 delta)
-    {
-        float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
-    }
-
     public void MoveCharacterBy(Vector2 delta)
     {
         float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-        Vector2 dest = rigidbody2D.position + (delta * InitialVelocity);
+        Vector2 dest = rigidbody2D.position + (delta * InitialVelocity * Time.fixedDeltaTime);
 
         rigidbody2D.MovePositionAndRotation(dest, angle);
     }

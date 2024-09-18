@@ -10,7 +10,7 @@ public class CharacterUI : MonoBehaviour
     private void Awake()
     {
         GameManager.Instance.AddEvent(EEvent.GameStart, OnGameStart);
-        GameManager.Instance.AddEvent(EEvent.ChangeHP, OnChangeHP);
+        GameManager.Instance.AddEvent(EEvent.CharacterChangeHP, OnChangeHP);
     }
 
     private void OnGameStart(object param)

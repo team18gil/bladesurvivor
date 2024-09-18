@@ -12,6 +12,8 @@ public class CharacterManager : MonoBehaviour
 
     private Coroutine moveCoroutine;
 
+    public CharacterObject CharacterObject => characterObject;
+
     private void Awake()
     {
         GameManager.Instance.AddEvent(EEvent.GameReady, OnGameReady);
@@ -49,7 +51,7 @@ public class CharacterManager : MonoBehaviour
         }
         else
         {
-            GameManager.Instance.SendEvent(EEvent.ChangeHP, nextHP);
+            GameManager.Instance.SendEvent(EEvent.CharacterChangeHP, nextHP);
         }
         hp = nextHP;
     }

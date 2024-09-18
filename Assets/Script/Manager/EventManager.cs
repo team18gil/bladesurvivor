@@ -6,16 +6,25 @@ using UnityEngine;
 
 public enum EEvent
 {
+    // Game settings
     GameReady,
     GameStart,
     GamePause,
     GameResume,
-
-    TimerTick,
-    MonsterHitCharacter,
-    ChangeHP,
-
     GameOver,
+    GameTimerTick,
+
+    // Character
+    CharacterChangeHP,
+
+    // Monster
+    MonsterHitCharacter,
+    MonsterDead,
+    
+    // Item
+    ItemGenerated,
+    ItemCollected,
+    ItemAddExp,
 }
 
 

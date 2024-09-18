@@ -24,7 +24,7 @@ public class UIElementGame : UIElementBase
 
     private void OnEnable()
     {
-        GameManager.Instance.AddEvent(EEvent.TimerTick, OnTimerTick);
+        GameManager.Instance.AddEvent(EEvent.GameTimerTick, OnTimerTick);
         xpProgressBar.value = 0;
     }
 
@@ -43,6 +43,6 @@ public class UIElementGame : UIElementBase
 
     private void OnDisable()
     {
-        GameManager.Instance.RemoveEvent(EEvent.TimerTick, OnTimerTick);
+        GameManager.Instance.RemoveEvent(EEvent.GameTimerTick, OnTimerTick);
     }
 }

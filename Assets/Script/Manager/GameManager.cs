@@ -55,8 +55,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private UserData userData;
     [SerializeField] private Transform playgroundParent;
+    // use direcly instead of event manager to call frequently
     [SerializeField] private CharacterManager characterManager;
-    [SerializeField] private UIManager uiManager;
 
     public UserData UserData => userData;
     public Transform PlaygroundParent => playgroundParent;
@@ -71,6 +71,10 @@ public class GameManager : MonoBehaviour
     private DefaultInputActionAsset inputActionAsset;
     private EGameStatus gameStatus;
     private Coroutine timerCoroutine = null;
+
+
+
+    public CharacterObject CharacterObject => characterManager != null ? characterManager.CharacterObject : null;
 
     private void Awake()
     {
@@ -99,7 +103,7 @@ public class GameManager : MonoBehaviour
         // TODO: set initial data on here
         var newGameData = new GameData()
         {
-            velocity = 0.1f,
+            velocity = 4f,
             maxHP = 100f,
         };
 
@@ -132,7 +136,7 @@ public class GameManager : MonoBehaviour
         int timer = -1;
         while (true)
         {
-            eventManager.SendEvent(EEvent.TimerTick, ++timer);
+            eventManager.SendEvent(EEvent.GameTimerTick, ++timer);
 
             // time goes slightly faster to make gamers feel they are good at playing
             yield return new WaitForSeconds(0.9f);
