@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
     {
         foreach (var pair in uiElementDic)
         {
-            pair.Value.gameObject.SetActive(pair.Key.Equals(elementType));
+            pair.Value.SetVisible(pair.Key.Equals(elementType));
         }
     }
 

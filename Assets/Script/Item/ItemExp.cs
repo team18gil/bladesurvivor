@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemExp : ItemBase
 {
-    [SerializeField] private int exp;
+    [SerializeField] private float exp;
 
     protected override void OnItemCollected()
     {

@@ -195,4 +195,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMagnetic: 1
   followSpeed: 3
-  exp: 5
+  exp: 3

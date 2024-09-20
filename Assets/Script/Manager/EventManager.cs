@@ -15,7 +15,10 @@ public enum EEvent
     GameTimerTick,
 
     // Character
+    CharacterSetLevelFirst,
     CharacterChangeHP,
+    CharacterChangeExp,
+    CharacterLevelUp,
 
     // Monster
     MonsterHitCharacter,

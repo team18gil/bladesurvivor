@@ -309,6 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterObject: {fileID: 850947806}
+  levelExpDataCSVText: {fileID: 4900000, guid: c74eb9bb8b8654b83873b44826f2a31e, type: 3}
 --- !u!4 &177300435
 Transform:
   m_ObjectHideFlags: 0
@@ -726,7 +727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &283009790
 Transform:
   m_ObjectHideFlags: 0
@@ -1403,6 +1404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterViewObject: {fileID: 89269914}
   characterFollowingObject: {fileID: 558603175}
+  MagneticRange: 4
 --- !u!50 &850947807
 Rigidbody2D:
   serializedVersion: 5
@@ -1497,7 +1499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &927893479
 MonoBehaviour:
   m_ObjectHideFlags: 0

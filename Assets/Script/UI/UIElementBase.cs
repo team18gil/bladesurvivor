@@ -17,6 +17,11 @@ public class UIElementBase : MonoBehaviour
         rootVisualElement = uiDocument.rootVisualElement;
     }
 
+    public void SetVisible(bool visible)
+    {
+        rootVisualElement.visible = visible;
+    }
+
     public T Q<T>(string name) where T : VisualElement
     {
         var queried = rootVisualElement.Q<T>(name);

@@ -8,6 +8,13 @@ public class CharacterManager : MonoBehaviour
     private MoveValueDelegate moveValueDelegate;
 
     [SerializeField] private CharacterObject characterObject;
+    [SerializeField] private TextAsset levelExpDataCSVText;
+
+    private LevelExpData levelExpData;
+
+    private int level;
+    private float exp;
+    private float targetExp;
     private float hp;
 
     private Coroutine moveCoroutine;
@@ -19,7 +26,10 @@ public class CharacterManager : MonoBehaviour
         GameManager.Instance.AddEvent(EEvent.GameReady, OnGameReady);
         GameManager.Instance.AddEvent(EEvent.GameStart, OnGameStart);
         GameManager.Instance.AddEvent(EEvent.MonsterHitCharacter, OnMonsterHitCharacter);
+        GameManager.Instance.AddEvent(EEvent.ItemAddExp, OnItemAddExp);
         GameManager.Instance.AddEvent(EEvent.GameOver, OnGameOver);
+
+        levelExpData = new(levelExpDataCSVText.text);
     }
 
     private void OnGameReady(object param)
@@ -30,13 +40,26 @@ public class CharacterManager : MonoBehaviour
 
     private void OnGameStart(object param)
     {
-        var gameData = (GameData)param;
-        hp = gameData.maxHP;
+        if (param is GameData gameData)
+        {
+            SetLevel(1);
+            exp = 0f;
+            hp = gameData.maxHP;
 
-        characterObject.InitialVelocity = gameData.velocity;
-        characterObject.SetStatus(CharacterObject.ECharacterStatus.Alive);
-        characterObject.transform.localPosition = Vector3.zero;
-        characterObject.MakeWeapon(CharacterObject.EWeaponType.Sword); // set with character or initial setting
+            GameManager.Instance.SendEvent(EEvent.CharacterSetLevelFirst, (level, targetExp));
+            GameManager.Instance.SendEvent(EEvent.CharacterChangeExp, 0f);
+
+            characterObject.InitialVelocity = gameData.velocity;
+            characterObject.SetStatus(CharacterObject.ECharacterStatus.Alive);
+            characterObject.transform.localPosition = Vector3.zero;
+            characterObject.MakeWeapon(CharacterObject.EWeaponType.Sword); // set with character or initial setting
+        }
+    }
+
+    private void SetLevel(int level)
+    {
+        this.level = level;
+        targetExp = levelExpData.GetTargetExp(level);
     }
     
     private void OnMonsterHitCharacter(object param)
@@ -54,6 +77,26 @@ public class CharacterManager : MonoBehaviour
             GameManager.Instance.SendEvent(EEvent.CharacterChangeHP, nextHP);
         }
         hp = nextHP;
+    }
+
+    private void OnItemAddExp(object param)
+    {
+        if (param is float exp)
+        {
+            float nextExp = this.exp + exp;
+
+            if (nextExp >= targetExp)
+            {
+                nextExp -= targetExp;
+                SetLevel(level + 1); // targetExp changed
+
+                GameManager.Instance.SendEvent(EEvent.CharacterLevelUp, (level, targetExp));
+                Debug.Log($"Level up: targetExp is {targetExp}");
+            }
+            GameManager.Instance.SendEvent(EEvent.CharacterChangeExp, nextExp);
+            Debug.Log($"Exp changed: {this.exp} > {nextExp} ( / {targetExp})");
+            this.exp = nextExp;
+        }
     }
 
     private void OnGameOver(object param)
